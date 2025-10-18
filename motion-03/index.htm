@@ -1761,16 +1761,19 @@ function showAllSect(){
       elSect.style.display = "";
     }
 }
-document.getElementById("tombolbuka").onclick=function(){
-  enableScroll();
-  _playAudio();
-  jQuery("#cover").animate({ opacity: 0, top: "-100%"}, 1500);
-  showAllSect();
-    jQuery("#cover").hide(1500,function(){
-        //jQuery("#ytSound").animate({ bottom: "0px"}, 4000);
-    document.querySelector('.elementor-background-video-container video').play()
-    });
-};
+const tombolBuka = document.getElementById("tombolbuka");
+if (tombolBuka) {
+    tombolBuka.onclick=function(){
+      enableScroll();
+      _playAudio();
+      jQuery("#cover").animate({ opacity: 0, top: "-100%"}, 1500);
+      showAllSect();
+        jQuery("#cover").hide(1500,function(){
+            //jQuery("#ytSound").animate({ bottom: "0px"}, 4000);
+        document.querySelector('.elementor-background-video-container video').play()
+        });
+    };
+}
 discMusics.forEach((disc) => {
     disc.onclick=function(){
         _pauseAudio();
@@ -2336,12 +2339,14 @@ but ours is my favorite.</p>				</div>
 				<div class="elementor-widget-container">
 					    <script type="text/javascript" src="../wp-content/plugins/cobakekiri/includes/assets/js/clipboard.min.js"></script>
     <div class="elementor-button-wrapper">
-        <a class="elementor-button" role="button" id="ck_copy_content_342" href="#" data-clipboard-text="12345678"><i class="far fa-copy" aria-hidden="true" style="margin-right:10px;"></i>Salin</a></div>
+        <a class="elementor-button" role="button" id="ck_copy_content_342" href="#" data-clipboard-text="7080917521"><i class="far fa-copy" aria-hidden="true" style="margin-right:10px;"></i>Salin</a></div>
     <script type="text/javascript">
     document.querySelectorAll('[id^=ck_copy_content_]').forEach(ahref =>{
-        ahref.onclick = function(e) {
-            e.preventDefault();
-            ckCopyContent(ahref.id);
+        if (ahref) {
+            ahref.onclick = function(e) {
+                e.preventDefault();
+                ckCopyContent(ahref.id);
+            }
         }
     })
     function ckCopyContent(ckElCopy){
@@ -2417,12 +2422,14 @@ but ours is my favorite.</p>				</div>
 				<div class="elementor-widget-container">
 					    <script type="text/javascript" src="../wp-content/plugins/cobakekiri/includes/assets/js/clipboard.min.js"></script>
     <div class="elementor-button-wrapper">
-        <a class="elementor-button" role="button" id="ck_copy_content_553" href="#" data-clipboard-text="12345678"><i class="far fa-copy" aria-hidden="true" style="margin-right:10px;"></i>Salin</a></div>
+        <a class="elementor-button" role="button" id="ck_copy_content_553" href="#" data-clipboard-text="702401028147532"><i class="far fa-copy" aria-hidden="true" style="margin-right:10px;"></i>Salin</a></div>
     <script type="text/javascript">
     document.querySelectorAll('[id^=ck_copy_content_]').forEach(ahref =>{
-        ahref.onclick = function(e) {
-            e.preventDefault();
-            ckCopyContent(ahref.id);
+        if (ahref) {
+            ahref.onclick = function(e) {
+                e.preventDefault();
+                ckCopyContent(ahref.id);
+            }
         }
     })
     function ckCopyContent(ckElCopy){
@@ -3081,8 +3088,10 @@ function getUrlParameter(name) {
 // Function untuk mengisi nama tamu dari parameter URL
 function fillGuestNameFromUrl() {
     const guestName = getUrlParameter('to') || getUrlParameter('nama') || getUrlParameter('guest');
+    
     if (guestName) {
         const nameInput = document.getElementById('gs-author');
+        
         if (nameInput) {
             // Decode URL dan replace + dengan spasi
             const decodedName = decodeURIComponent(guestName.replace(/\+/g, ' '));
@@ -3126,84 +3135,116 @@ function showWelcomeMessage(guestName) {
 
 // Load wishes dan isi nama tamu saat halaman dimuat
 document.addEventListener('DOMContentLoaded', function() {
-    loadWishes();
-    fillGuestNameFromUrl();
-});
-
-// Handle form submission
-document.getElementById('google-sheets-rsvp-form').addEventListener('submit', function(e) {
-    e.preventDefault();
+    console.log('DOM Content Loaded - Starting initialization...');
     
-    const submitBtn = document.getElementById('gs-submit-btn');
-    const statusMessage = document.getElementById('gs-status-message');
+    // Tunggu sebentar untuk memastikan semua element sudah ter-render
+    setTimeout(() => {
+        console.log('Starting delayed initialization...');
+        loadWishes();
+        fillGuestNameFromUrl();
+    }, 500);
     
-    // Ambil data dari form
-    const formData = {
-        name: document.getElementById('gs-author').value,
-        attendance: document.getElementById('gs-attendance').value,
-        guest: document.getElementById('gs-guest').value || '1',
-        message: document.getElementById('gs-message').value
-    };
-    
-    // Validasi
-    if (!formData.name || !formData.attendance || !formData.message) {
-        showStatus('error', 'Mohon lengkapi semua field yang wajib diisi!');
-        return;
-    }
-    
-    // Disable button dan ubah text
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '⏳ Mengirim...';
-    
-    // Kirim data ke Google Sheets
-    fetch(WEB_APP_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
-    })
-    .then(() => {
-        // Karena no-cors, kita asumsikan sukses
-        showStatus('success', '✅ Ucapan berhasil dikirim! Terima kasih.');
+    // Handle form submission dengan delay
+    setTimeout(() => {
+        console.log('Setting up form event listeners...');
+        const form = document.getElementById('google-sheets-rsvp-form');
+        console.log('Form element:', form);
         
-        // Reset form
-        document.getElementById('google-sheets-rsvp-form').reset();
-        document.getElementById('gs-guest-wrapper').style.display = 'none';
+        if (form) {
+            form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('gs-submit-btn');
+            const statusMessage = document.getElementById('gs-status-message');
+            
+            // Ambil data dari form
+            const formData = {
+                name: document.getElementById('gs-author').value,
+                attendance: document.getElementById('gs-attendance').value,
+                guest: document.getElementById('gs-guest').value || '1',
+                message: document.getElementById('gs-message').value
+            };
+            
+            // Validasi
+            if (!formData.name || !formData.attendance || !formData.message) {
+                showStatus('error', 'Mohon lengkapi semua field yang wajib diisi!');
+                return;
+            }
+            
+            // Disable button dan ubah text
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '⏳ Mengirim...';
+            
+            // Kirim data ke Google Sheets
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(() => {
+                // Karena no-cors, kita asumsikan sukses
+                showStatus('success', '✅ Ucapan berhasil dikirim! Terima kasih.');
+                
+                // Reset form
+                document.getElementById('google-sheets-rsvp-form').reset();
+                document.getElementById('gs-guest-wrapper').style.display = 'none';
+                
+                // Reload wishes setelah 2 detik
+                setTimeout(() => {
+                    loadWishes();
+                }, 2000);
+            })
+            .catch((error) => {
+                showStatus('error', '❌ Gagal mengirim ucapan. Silakan coba lagi.');
+                console.error('Error:', error);
+            })
+            .finally(() => {
+                // Enable button kembali
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '💌 Kirim Ucapan';
+            });
+        });
+        } else {
+            console.error('Form element not found!');
+        }
         
-        // Reload wishes setelah 2 detik
-        setTimeout(() => {
-            loadWishes();
-        }, 2000);
-    })
-    .catch((error) => {
-        showStatus('error', '❌ Gagal mengirim ucapan. Silakan coba lagi.');
-        console.error('Error:', error);
-    })
-    .finally(() => {
-        // Enable button kembali
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '💌 Kirim Ucapan';
-    });
-});
-
-// Show/hide guest count based on attendance
-document.getElementById('gs-attendance').addEventListener('change', function() {
-    const guestWrapper = document.getElementById('gs-guest-wrapper');
-    if (this.value === 'present') {
-        guestWrapper.style.display = 'block';
-        document.getElementById('gs-guest').required = true;
-    } else {
-        guestWrapper.style.display = 'none';
-        document.getElementById('gs-guest').required = false;
-        document.getElementById('gs-guest').value = '';
-    }
+        // Show/hide guest count based on attendance
+        console.log('Setting up attendance event listener...');
+        const attendanceSelect = document.getElementById('gs-attendance');
+        console.log('Attendance select element:', attendanceSelect);
+        
+        if (attendanceSelect) {
+            attendanceSelect.addEventListener('change', function() {
+                const guestWrapper = document.getElementById('gs-guest-wrapper');
+                if (this.value === 'present') {
+                    guestWrapper.style.display = 'block';
+                    document.getElementById('gs-guest').required = true;
+                } else {
+                    guestWrapper.style.display = 'none';
+                    document.getElementById('gs-guest').required = false;
+                    document.getElementById('gs-guest').value = '';
+                }
+            });
+        } else {
+            console.error('Attendance select element not found!');
+        }
+    }, 1000); // Delay 1 detik untuk event listeners
 });
 
 // Function untuk load wishes dari Google Sheets
 function loadWishes() {
+    console.log('Loading wishes...');
     const container = document.getElementById('wishes-container');
+    console.log('Wishes container element:', container);
+    
+    if (!container) {
+        console.error('Wishes container not found!');
+        return;
+    }
+    
     container.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">Memuat ucapan...</div>';
     
     fetch(WEB_APP_URL + '?action=get')
@@ -3312,6 +3353,59 @@ function showStatus(type, message) {
         statusElement.style.display = 'none';
     }, 5000);
 }
+
+// URL Parameter Handler for Guest Names
+(function() {
+    // Function to get URL parameter
+    function getUrlParameter(name) {
+        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        var results = regex.exec(location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+    
+    // Function to replace guest names
+    function replaceGuestNames() {
+        var guestName = getUrlParameter('to');
+        if (guestName && guestName.trim() !== '') {
+            // Clean the guest name (remove any HTML encoding)
+            guestName = guestName.replace(/&amp;/g, '&').replace(/\\/g, '');
+            
+            // Also replace any other instances of "Nama Tamu" in the document
+            var walker = document.createTreeWalker(
+                document.body,
+                NodeFilter.SHOW_TEXT,
+                null,
+                false
+            );
+            
+            var textNodes = [];
+            var node;
+            
+            while (node = walker.nextNode()) {
+                if (node.textContent.includes('Nama Tamu')) {
+                    textNodes.push(node);
+                }
+            }
+            
+            textNodes.forEach(function(textNode) {
+                textNode.textContent = textNode.textContent.replace(/Nama Tamu/g, guestName);
+            });
+        }
+    }
+    
+    // Run when DOM is loaded
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', replaceGuestNames);
+    } else {
+        replaceGuestNames();
+    }
+    
+    // Also run after a short delay to catch any dynamically loaded content
+    setTimeout(replaceGuestNames, 500);
+    // Run again after 2 seconds to ensure all dynamic content is loaded
+    setTimeout(replaceGuestNames, 2000);
+})();
 </script>
 
 <style id="e-addons-template-dynamic-164270d-inline">.elementor:is(.e-post-10187,.e-loop-item-10187) .elementor-element.elementor-element-164270d:not(.elementor-motion-effects-element-type-background), .elementor:is(.e-post-10187,.e-loop-item-10187) .elementor-element.elementor-element-164270d > .elementor-motion-effects-container > .elementor-motion-effects-layer{background-image: url("../Foto/Hasan.jpg");--e-bg-lazyload:url("../Foto/Hasan.jpg");background-position: center center;background-size: cover;}</style>	</body>
